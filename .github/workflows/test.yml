@@ -4,7 +4,7 @@ on: [push]
 jobs:
   lint-test:
     name: Lint + Test
-    uses: gsa/data.gov/.github/workflows/ckan-test.yml@main
+    uses: gsa/data.gov/.github/workflows/ckan-test.yml@ckan-210
     with:
       ext_name: datajson
       plugins: datajson harvest datajson_validator datajson_harvest
