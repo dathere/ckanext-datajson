@@ -3,3 +3,4 @@ pycodestyle
 pytest
 pytest-ckan
 pytest-cov
+mock
