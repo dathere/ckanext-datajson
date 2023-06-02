@@ -142,7 +142,7 @@ class Package2Pod(object):
                     method = getattr(Wrappers, wrapper)
                     if method:
                         Wrappers.current_field_map = field_map
-                        dataset[key] = method(dataset.get(key, ""))
+                        dataset[key] = method(dataset.get(key))
 
             # CKAN doesn't like empty values on harvest, let's get rid of them
             # Remove entries where value is None, "", or empty list []
