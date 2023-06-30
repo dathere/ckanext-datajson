@@ -26,7 +26,7 @@ class DataJsonHarvester(DatasetHarvesterBase):
     def load_remote_catalog(self, harvest_job):
         url = harvest_job.source.url
         # todo: into config and across harvester
-        headers = {'User-Agent': 'Data.gov/2.0'}
+        headers = {'User-Agent': 'HarvesterBot/0.0 (https://data.gov; datagovhelp@gsa.gov) Data.gov/2.0'}
         try:
             response = requests.get(url, headers=headers)
         except requests.exceptions.ProxyError as e:
