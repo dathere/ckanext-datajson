@@ -8,7 +8,6 @@ from . import blueprint
 class DataJsonPlugin(p.SingletonPlugin):
     p.implements(p.interfaces.IConfigurer)
     p.implements(p.ITemplateHelpers)
-    p.implements(p.interfaces.IRoutes, inherit=True)
     p.implements(p.IBlueprint)
 
     def update_config(self, config):
