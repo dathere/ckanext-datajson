@@ -6,7 +6,7 @@ from ckan.logic.validators import name_validator
 import ckan.lib.dictization.model_dictize as model_dictize
 from ckan.lib.munge import munge_title_to_name
 from ckan.lib.navl.dictization_functions import Invalid, DataError
-from ckan.lib.navl.validators import ignore_empty
+from ckan.lib.navl.validators import ignore_empty, unicode_only
 from ckan.lib.search import rebuild
 
 from ckanext.harvest.model import HarvestObject, HarvestObjectError, HarvestObjectExtra
@@ -103,7 +103,7 @@ class DatasetHarvesterBase(HarvesterBase):
 
     def extra_schema(self):
         return {
-            'validator_schema': [ignore_empty, str, validate_schema],
+            'validator_schema': [ignore_empty, unicode_only, validate_schema],
         }
 
     def gather_stage(self, harvest_job):
