@@ -17,6 +17,7 @@ import hashlib
 import json
 import yaml
 import os
+import sansjson
 
 from jsonschema.validators import Draft4Validator
 from jsonschema import FormatChecker
@@ -266,19 +267,26 @@ class DatasetHarvesterBase(HarvesterBase):
                 # in the package so we can avoid updating datasets that
                 # don't look like they've changed.
                 source_hash = self.find_extra(pkg, "source_hash")
+
                 if source_hash is None:
                     try:
                         source_hash = json.loads(self.find_extra(pkg, "extras_rollup")).get("source_hash")
                     except TypeError:
                         source_hash = None
+                # use sha1 for existing hash created by older versions of function make_upstream_content_hash
+                # use sha256 for any new hash
+                # sha1 generates 40 characters, sha256 generates 64 characters
+                sha1_or_sha256 = "sha1" if len(source_hash) == 40 else "sha256"
+
                 if pkg.get("state") == "active" \
                         and dataset['identifier'] not in existing_parents_demoted \
                         and dataset['identifier'] not in existing_datasets_promoted \
                         and source_hash == self.make_upstream_content_hash(dataset,
                                                                            source,
                                                                            catalog_extras,
-                                                                           schema_version):
-                    log.info('SKIP: {}'.format(dataset['identifier']))
+                                                                           schema_version,
+                                                                           sha1_or_sha256):
+                    log.info('{} Match. SKIP: {}'.format(sha1_or_sha256, dataset['identifier']))
                     continue
             else:
                 pkg_id = uuid.uuid4().hex
@@ -829,14 +837,26 @@ class DatasetHarvesterBase(HarvesterBase):
         return True
 
     def make_upstream_content_hash(self, datasetdict, harvest_source,
-                                   catalog_extras, schema_version='1.0'):
-        if schema_version == '1.0':
-            return hashlib.sha1(json.dumps(datasetdict, sort_keys=True) +  # NOQA W504
-                                "|" + harvest_source.config + "|" +  # NOQA W504
-                                self.HARVESTER_VERSION).hexdigest()
+                                   catalog_extras, schema_version='1.0',
+                                   sha1_or_sha256='sha256'):
+        # sansjson.sort was added to sort dataset for better change detection.
+        # doing so we can avoid updating datasets that don't have meaningful changes. (i.e. keyword order)
+
+        # by default sansjson.sort and sha256 are used. sha1 is used for existing datasets,
+        # until the dataset is changed and the hash is updated to new sha256.
+        if sha1_or_sha256 == 'sha1':
+            hash_function = hashlib.sha1
         else:
-            return hashlib.sha1((json.dumps(datasetdict, sort_keys=True) + "|" + json.dumps(catalog_extras,
-                                sort_keys=True)).encode('utf-8')).hexdigest()
+            hash_function = hashlib.sha256
+            datasetdict = sansjson.sort_pyobject(datasetdict)
+
+        if schema_version == '1.0':
+            return hash_function(json.dumps(datasetdict, sort_keys=True) +  # NOQA W504
+                                 "|" + harvest_source.config + "|" +  # NOQA W504
+                                 self.HARVESTER_VERSION).hexdigest()
+        else:
+            return hash_function((json.dumps(datasetdict, sort_keys=True) + "|" + json.dumps(catalog_extras,
+                                 sort_keys=True)).encode('utf-8')).hexdigest()
 
     def find_extra(self, pkg, key):
         for extra in pkg["extras"]:
