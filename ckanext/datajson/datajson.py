@@ -852,12 +852,11 @@ class DatasetHarvesterBase(HarvesterBase):
 
         if schema_version == '1.0':
             return hash_function(json.dumps(datasetdict, sort_keys=True) +  # NOQA W504
-                                "|" + harvest_source.config + "|" +  # NOQA W504
-                                self.HARVESTER_VERSION).hexdigest()
+                                 "|" + harvest_source.config + "|" +  # NOQA W504
+                                 self.HARVESTER_VERSION).hexdigest()
         else:
             return hash_function((json.dumps(datasetdict, sort_keys=True) + "|" + json.dumps(catalog_extras,
-                                sort_keys=True)).encode('utf-8')).hexdigest()
-
+                                 sort_keys=True)).encode('utf-8')).hexdigest()
 
     def find_extra(self, pkg, key):
         for extra in pkg["extras"]:
