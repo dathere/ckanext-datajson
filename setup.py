@@ -31,6 +31,7 @@ setup(
         'pyyaml',
         'jsonschema~=2.4.0',
         'rfc3987',
+        'sansjson==0.3.0',
     ],
     setup_requires=['wheel'],
     entry_points="""
