@@ -795,7 +795,12 @@ class DatasetHarvesterBase(HarvesterBase):
             pkg = existing_pkg
 
             log.warn('updating package %s (%s) from %s' % (pkg["name"], pkg["id"], harvest_object.source.url))
-            pkg = get_action('package_update')(self.context(), pkg)
+            try:
+                pkg = get_action('package_update')(self.context(), pkg)
+            except ValidationError as e:
+                log.error('Failed to update package %s: %s' % (pkg["name"], str(e)))
+                self._save_object_error('Error updating package: %s' % (e), harvest_object, 'Import')
+                return None
         else:
             # It doesn't exist yet. Create a new one.
             pkg['name'] = self.make_package_name(dataset_processed["title"], harvest_object.guid)
@@ -809,6 +814,10 @@ class DatasetHarvesterBase(HarvesterBase):
                 pkg['name'] = self.make_package_name(dataset_processed["title"], harvest_object.guid)
                 pkg = get_action('package_create')(self.context(), pkg)
                 log.warn('created package %s (%s) from %s' % (pkg["name"], pkg["id"], harvest_object.source.url))
+            except ValidationError as e:
+                log.error('Failed to create package %s: %s' % (pkg["name"], str(e)))
+                self._save_object_error('Error creating package: %s' % (e), harvest_object, 'Import')
+                return None
             except Exception as e:
                 log.error('Failed to create package %s from %s\n\t%s\n\t%s' % (pkg["name"],
                                                                                harvest_object.source.url,
