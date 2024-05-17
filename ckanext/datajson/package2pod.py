@@ -57,8 +57,10 @@ class Package2Pod(object):
         import sys
 
         try:
+            if package is None or json_export_map is None:
+                log.error("Invalid package or export map provided.")
+                return None  
             dataset = Package2Pod.export_map_fields(package, json_export_map, redaction_enabled)
-
             # skip validation if we export whole /data.json catalog
             if json_export_map.get('validation_enabled'):
                 return Package2Pod.validate(package, dataset)
