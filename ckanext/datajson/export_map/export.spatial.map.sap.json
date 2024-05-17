@@ -1,0 +1,90 @@
+{
+  "validation_enabled": false,
+  "catalog_headers": {
+    "conformsTo": "https://project-open-data.cio.gov/v1.1/schema",
+    "describedBy": "https://project-open-data.cio.gov/v1.1/schema/catalog.json",
+    "@context": "https://project-open-data.cio.gov/v1.1/schema/catalog.jsonld",
+    "@type": "dcat:Catalog"
+  },
+  "dataset_fields_map": {
+    "title": {
+      "field": "title"
+    },
+    "description": {
+      "field": "notes"
+    },
+    "alternate_title": {
+      "field": "alternate_title"
+    },
+    "source": {
+      "field": "source"
+    },
+    "authorizer": {
+      "field": "authorizer"
+    },
+    "tags": {
+      "field": "tag_string"
+    },
+    "organization": {
+      "field": "owner_org"
+    },
+    "program": {
+      "field": "program"
+    },
+    "program_title": {
+      "field": "program_title"
+    },
+    "modified": {
+      "field": "metadata_modified"
+    },
+    "accessLevel": {
+      "extra": true,
+      "field": "Access Level",
+      "default": "public"
+    },
+    "identifier": {
+      "extra": true,
+      "field": "identifier"
+    },
+    "license": {
+      "extra": true,
+      "field": "license_id"
+    },
+    "contactPoint": {
+      "wrapper": "build_contact_point",
+      "map": {
+        "fn": {
+          "field": "contact_name"
+        },
+        "hasEmail": {
+          "field": "contact_email"
+        }
+      }
+    },
+    "issued": {
+      "extra": true,
+      "field": "issued"
+    },
+    "spatial": {
+      "extra": true,
+      "field": "spatial_coverage"
+    },
+    "temporal": {
+      "extra": true,
+      "field": "temporal"
+    },
+    "publisher": {
+      "extra": true,
+      "field": "publisher",
+      "wrapper": "catalog_publisher"
+    },
+    "data_collection_frequency": {
+      "extra": true,
+      "field": "data_collection_frequency"
+    },
+    "data_collection_timeframe": {
+      "extra": true,
+      "field": "data_collection_timeframe"
+    }
+  }
+}
