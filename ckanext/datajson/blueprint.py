@@ -154,6 +154,8 @@ def make_json(export_type='datajson', owner_org=None):
         json_export_map = get_export_map_json()
 
         if json_export_map:
+            packages = _get_ckan_datasets() or []
+            packages = [pkg for pkg in packages if pkg] 
             for pkg in packages:
                 if json_export_map.get('debug'):
                     output.append(pkg)
