@@ -7,92 +7,69 @@
     "@type": "dcat:Catalog"
   },
   "dataset_fields_map": {
+    "identifier": {
+      "field": "agency_dataset_id"
+    },
     "title": {
       "field": "title"
     },
     "description": {
-      "field": "notes"
-    },
-    "modified": {
-      "extra": true,
-      "field": "Modified"
-    },
-    "accessLevel": {
-      "extra": true,
-      "field": "Public Access Level"
-    },
-    "identifier": {
-      "extra": true,
-      "field": "Unique Id"
-    },
-    "dataQuality": {
-      "extra": true,
-      "field": "Data Quality"
-    },
-    "conformsTo": {
-      "extra": true,
-      "field": "Conforms To"
-    },
-    "describedBy": {
-      "extra": true,
-      "field": "Data Dictionary"
-    },
-    "describedByType": {
-      "extra": true,
-      "field": "Data Dictionary Type"
-    },
-    "issued": {
-      "extra": true,
-      "field": "Release Date"
-    },
-    "landingPage": {
-      "extra": true,
-      "field": "Homepage Url"
-    },
-    "license": {
-      "extra": true,
-      "field": "License New"
-    },
-    "primaryITInvestmentUII": {
-      "extra": true,
-      "field": "Primary It Investment Uii"
-    },
-    "rights": {
-      "extra": true,
-      "field": "Access Level Comment"
-    },
-    "systemOfRecords": {
-      "extra": true,
-      "field": "System Of Records"
-    },
-    "spatial": {
-      "extra": true,
-      "field": "Spatial"
-    },
-    "temporal": {
-      "extra": true,
-      "field": "Temporal"
+      "field": "description/abstract"
     },
     "publisher": {
       "extra": true,
-      "field": "Responsible Party",
-      "wrapper": "catalog_publisher"
+      "field": "source(s)"
+    },
+    "keyword": {
+      "type": "array",
+      "extra": true,
+      "field": "classification",
+      "split": ","
+    },
+    "accessLevel": {
+      "extra": true,
+      "field": "trust_level"
+    },
+    "spatial": {
+      "extra": true,
+      "field": "spatial_coverage"
+    },
+    "temporal": {
+      "extra": true,
+      "field": "years_available"
+    },
+    "issued": {
+      "extra": true,
+      "field": "program_title"
     },
     "accrualPeriodicity": {
       "extra": true,
-      "field": "Frequency Of Update",
-      "wrapper": "fix_accrual_periodicity"
+      "field": "frequency_of_data_collection"
+    },
+    "license": {
+      "extra": true,
+      "field": "fees"
+    },
+    "landingPage": {
+      "extra": true,
+      "field": "where_to_apply"
+    },
+    "language": {
+      "type": "array",
+      "extra": true,
+      "field": "language",
+      "split": ","
     },
     "contactPoint": {
       "wrapper": "build_contact_point",
       "map": {
         "fn": {
           "extra": true,
-          "field": "Responsible Party"
+          "field": "program"
         },
         "hasEmail": {
           "extra": true,
-          "field": "Contact Email"
+          "field": "url_for_more_info_about_restricted_file"
         }
       }
     },
@@ -103,63 +80,179 @@
           "field": "url"
         },
         "mediaType": {
-          "field": "mimetype"
-        },
-        "format": {
           "field": "format"
-        },
-        "title": {
-          "field": "name"
-        },
-        "description": {
-          "field": "description"
-        },
-        "conformsTo": {
-          "field": "conformsTo"
-        },
-        "describedBy": {
-          "field": "describedBy"
-        },
-        "describedByType": {
-          "field": "describedByType"
         }
       }
     },
-    "keyword": {
-      "type": "array",
-      "array_key": "display_name",
-      "field": "tags"
-    },
-    "bureauCode": {
-      "type": "array",
+    "dataQuality": {
       "extra": true,
-      "field": "Bureau Code",
-      "split": ",",
-      "wrapper": "bureau_code"
-    },
-    "programCode": {
-      "type": "array",
-      "extra": true,
-      "field": "Program Code",
-      "split": ","
-    },
-    "language": {
-      "type": "array",
-      "extra": true,
-      "field": "Language",
-      "split": ","
-    },
-    "references": {
-      "type": "array",
-      "extra": true,
-      "field": "Related Documents",
-      "split": ","
+      "field": "method_of_data_collection"
     },
     "theme": {
       "type": "array",
       "extra": true,
-      "field": "Category",
+      "field": "classification",
       "split": ","
+    },
+    "rights": {
+      "extra": true,
+      "field": "usage_restrictions"
+    },
+    "conformsTo": {
+      "extra": true,
+      "field": "documentation_for_application"
+    },
+    "describedBy": {
+      "extra": true,
+      "field": "supporting_documentation"
+    },
+    "name": {
+      "field": "name"
+    },
+    "owner_org": {
+      "field": "owner_org"
+    },
+    "agency_id": {
+      "extra": true,
+      "field": "agency_id"
+    },
+    "agency_datafile_id": {
+      "extra": true,
+      "field": "agency_datafile_id"
+    },
+    "alternative_title": {
+      "extra": true,
+      "field": "alternative_title"
+    },
+    "authorizer(s)": {
+      "type": "array",
+      "extra": true,
+      "field": "authorizer(s)",
+      "split": ","
+    },
+    "funder/sponsor(s)": {
+      "type": "array",
+      "extra": true,
+      "field": "funder/sponsor(s)",
+      "split": ","
+    },
+    "program": {
+      "extra": true,
+      "field": "program"
+    },
+    "preferred_citation": {
+      "extra": true,
+      "field": "preferred_citation"
+    },
+    "url_for_general_survey_info": {
+      "extra": true,
+      "field": "url_for_general_survey_info"
+    },
+    "doi": {
+      "extra": true,
+      "field": "doi"
+    },
+    "universe": {
+      "extra": true,
+      "field": "universe"
+    },
+    "unit_of_observation": {
+      "extra": true,
+      "field": "unit_of_observation"
+    },
+    "smallest_geographic_unit": {
+      "extra": true,
+      "field": "smallest_geographic_unit"
+    },
+    "sample": {
+    "extra": true,
+      "field": "sample"
+    },
+    "reference_date": {
+      "extra": true,
+      "field": "reference_date"
+    },
+    "data_collection_notes": {
+      "extra": true,
+      "field": "data_collection_notes"
+    },
+    "number_of_cases": {
+      "extra": true,
+      "field": "number_of_cases"
+    },
+    "number_of_variables": {
+      "extra": true,
+      "field": "number_of_variables"
+    },
+    "linkage_capabilities": {
+      "extra": true,
+      "field": "linkage_capabilities"
+    },
+    "linkage_variables": {
+      "type": "array",
+      "extra": true,
+      "field": "linkage_variables",
+      "split": ","
+    },
+    "public-use_version": {
+      "extra": true,
+      "field": "public-use_version"
+    },
+    "summary_of_differences": {
+      "extra": true,
+      "field": "summary_of_differences"
+    },
+    "geography_differs_from_restricted-use_file_(ruf)": {
+      "extra": true,
+      "field": "geography_differs_from_restricted-use_file_(ruf)"
+    },
+    "variable_detail_differs_from_ruf": {
+      "extra": true,
+      "field": "variable_detail_differs_from_ruf"
+    },
+    "public-use_file_selectable": {
+      "extra": true,
+      "field": "public-use_file_selectable"
+    },
+    "fti_flag": {
+      "extra": true,
+      "field": "fti_flag"
+    },
+    "provisioned_by_state": {
+      "type": "array",
+      "extra": true,
+      "field": "provisioned_by_state",
+      "split": ","
+    },
+    "provisioned_by_other_geographic_unit": {
+      "extra": true,
+      "field": "provisioned_by_other_geographic_unit"
+    },
+    "provisioned_by_month": {
+      "type": "array",
+      "extra": true,
+      "field": "provisioned_by_month",
+      "split": ","
+    },
+    "provisioned_by_year": {
+      "extra": true,
+      "field": "provisioned_by_year"
+    },
+    "provisioned_by_other_time_unit": {
+      "extra": true,
+      "field": "provisioned_by_other_time_unit"
+    },
+    "provisioning_units_other_than_time_or_geography": {
+      "extra": true,
+      "field": "provisioning_units_other_than_time_or_geography"
+    },
+    "can_non-citizens_apply": {
+      "extra": true,
+      "field": "can_non-citizens_apply"
+    },
+    "variable_selection_requirement": {
+      "extra": true,
+      "field": "variable_selection_requirement"     
     }
   }
 }
