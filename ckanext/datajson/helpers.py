@@ -214,7 +214,7 @@ class PackageExtraCache(object):
         try:
             self.pid = package.get('id')
 
-            current_extras = package.get('extras')
+            current_extras = package.get('extras') or []
             new_extras = {}
             for extra in current_extras:
                 if 'extras_rollup' == extra.get('key'):
