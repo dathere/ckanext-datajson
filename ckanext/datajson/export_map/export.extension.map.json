@@ -1,0 +1,104 @@
+{
+  "validation_enabled": false,
+  "catalog_headers": {
+    "@type": "dcat:Catalog"
+  },
+  "dataset_fields_map": {
+    "title": {
+      "field": "title"
+    },
+    "description": {
+      "field": "notes"
+    },
+    "modified": {
+      "field": "metadata_modified"
+    },
+    "identifier": {
+      "field": "name"
+    },
+    "dataset_type": {
+      "field": "type"
+    },
+    "repositoryUrl": {
+      "field": "url"
+    },
+    "publisher": {
+      "field": "publisher",
+      "wrapper": "catalog_publisher"
+    },
+    "contactName": {
+      "field": "contact_name"
+    },
+    "contactEmail": {
+      "field": "contact_email"
+    },
+    "extensionType": {
+      "field": "extension_type"
+    },
+    "detailedInfo": {
+      "field": "detailed_info"
+    },
+    "organizationUrl": {
+      "field": "organization_url"
+    },
+    "stars": {
+      "field": "stars"
+    },
+    "forksCount": {
+      "field": "forks_count"
+    },
+    "openIssues": {
+      "field": "open_issues"
+    },
+    "contributorsCount": {
+      "field": "contributors_count"
+    },
+    "contributors": {
+      "field": "contributors"
+    },
+    "repositorySize": {
+      "field": "repository_size"
+    },
+    "totalReleases": {
+      "field": "total_releases"
+    },
+    "latestRelease": {
+      "field": "latest_release"
+    },
+    "releaseDate": {
+      "field": "release_date"
+    },
+    "lastUpdate": {
+      "field": "last_update"
+    },
+    "ckanVersion": {
+      "field": "ckan_version"
+    },
+    "license": {
+      "field": "license"
+    },
+    "isArchived": {
+      "field": "is_archived"
+    },
+    "archiveReason": {
+      "field": "archive_reason"
+    },
+    "languageStats": {
+      "field": "language_stats"
+    },
+    "discussions": {
+      "field": "discussions"
+    },
+    "isFeatured": {
+      "field": "is_featured"
+    },
+    "topicId": {
+      "field": "topic_id"
+    },
+    "keyword": {
+      "type": "array",
+      "field": "tags",
+      "array_key": "name"
+    }
+  }
+}

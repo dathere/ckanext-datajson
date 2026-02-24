@@ -1,0 +1,86 @@
+{
+  "validation_enabled": false,
+  "catalog_headers": {
+    "@type": "dcat:Catalog"
+  },
+  "dataset_fields_map": {
+    "title": {
+      "field": "title"
+    },
+    "description": {
+      "field": "notes"
+    },
+    "modified": {
+      "field": "metadata_modified"
+    },
+    "identifier": {
+      "field": "name"
+    },
+    "dataset_type": {
+      "field": "type"
+    },
+    "siteUrl": {
+      "field": "url"
+    },
+    "publisher": {
+      "field": "publisher",
+      "wrapper": "catalog_publisher"
+    },
+    "location": {
+      "field": "location"
+    },
+    "region": {
+      "field": "region"
+    },
+    "latitude": {
+      "field": "latitude"
+    },
+    "longitude": {
+      "field": "longitude"
+    },
+    "siteType": {
+      "field": "site_type"
+    },
+    "status": {
+      "field": "status"
+    },
+    "ckanVersion": {
+      "field": "ckan_version"
+    },
+    "language": {
+      "field": "language"
+    },
+    "numDatasets": {
+      "field": "num_datasets"
+    },
+    "numOrganizations": {
+      "field": "num_organizations"
+    },
+    "numGroups": {
+      "field": "num_groups"
+    },
+    "contactEmail": {
+      "field": "contact_email"
+    },
+    "publicSite": {
+      "field": "public_site"
+    },
+    "gitRepo": {
+      "field": "git_repo"
+    },
+    "extensions": {
+      "field": "extensions"
+    },
+    "isFeatured": {
+      "field": "is_featured"
+    },
+    "topicId": {
+      "field": "topic_id"
+    },
+    "keyword": {
+      "type": "array",
+      "field": "tags",
+      "array_key": "name"
+    }
+  }
+}

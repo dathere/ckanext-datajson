@@ -469,6 +469,20 @@ class Wrappers(object):
         return Wrappers.bureau_code_list
 
     @staticmethod
+    def parse_json_list(value):
+        """Parse a JSON-encoded list string (from scheming multiple_text fields) into a Python list."""
+        if not value:
+            return value
+        import json as _json
+        try:
+            parsed = _json.loads(value)
+            if isinstance(parsed, list):
+                return [str(x) for x in parsed if x]
+        except (ValueError, TypeError):
+            pass
+        return value
+
+    @staticmethod
     def mime_type_it(value):
         if not value:
             return value

@@ -4,6 +4,8 @@ build
 ckanext_datajson.egg-info
 .DS_Store
 ckanext/datajson/export_map/*.map.json
+!ckanext/datajson/export_map/export.site.map.json
+!ckanext/datajson/export_map/export.extension.map.json
 .idea
 .vscode/
 *.swp

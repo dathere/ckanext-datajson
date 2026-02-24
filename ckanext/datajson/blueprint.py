@@ -26,12 +26,27 @@ _errors_json = []
 _zip_name = ''
 
 
+ECOSYSTEM_TYPES = ['dataset', 'site', 'extension']
+ECOSYSTEM_TYPE_MAPS = {
+    'site': 'export.site.map.json',
+    'extension': 'export.extension.map.json',
+}
+
+
 def generate_json():
     return generate_output('json')
 
 
 def generate_org_json(org_id):
     return generate_output('json', org_id=org_id)
+
+
+def generate_ecosystem_json():
+    return generate_output('json', dataset_types=ECOSYSTEM_TYPES)
+
+
+def generate_ecosystem_org_json(org_id):
+    return generate_output('json', org_id=org_id, dataset_types=ECOSYSTEM_TYPES)
 
 
 # def generate_jsonld():
@@ -85,42 +100,18 @@ def generate(export_type='datajson', org_id=None):
     return resp
 
 
-def generate_output(fmt='json', org_id=None):
+def generate_output(fmt='json', org_id=None, dataset_types=None):
     global _errors_json
     _errors_json = []
     # set content type (charset required or pylons throws an error)
     Response.content_type = 'application/json; charset=UTF-8'
 
-    # allow caching of response (e.g. by Apache)
-    # Commented because it works without it
-    # del Response.headers["Cache-Control"]
-    # del Response.headers["Pragma"]
-
-    # TODO special processing for enterprise
-    # output
-    data = make_json(export_type='datajson', owner_org=org_id)
-
-    # if fmt == 'json-ld':
-    #     # Convert this to JSON-LD.
-    #     data = OrderedDict([
-    #         ("@context", OrderedDict([
-    #             ("rdfs", "http://www.w3.org/2000/01/rdf-schema#"),
-    #             ("dcterms", "http://purl.org/dc/terms/"),
-    #             ("dcat", "http://www.w3.org/ns/dcat#"),
-    #             ("foaf", "http://xmlns.com/foaf/0.1/"),
-    #         ])),
-    #         ("@id", DataJsonPlugin.ld_id),
-    #         ("@type", "dcat:Catalog"),
-    #         ("dcterms:title", DataJsonPlugin.ld_title),
-    #         ("rdfs:label", DataJsonPlugin.ld_title),
-    #         ("foaf:homepage", DataJsonPlugin.site_url),
-    #         ("dcat:dataset", [dataset_to_jsonld(d) for d in data.get('dataset')]),
-    #     ])
+    data = make_json(export_type='datajson', owner_org=org_id, dataset_types=dataset_types)
 
     return p.toolkit.literal(json.dumps(data, indent=2))
 
 
-def make_json(export_type='datajson', owner_org=None):
+def make_json(export_type='datajson', owner_org=None, dataset_types=None):
     # Error handler for creating error log
     stream = io.StringIO()
     eh = logging.StreamHandler(stream)
@@ -139,52 +130,43 @@ def make_json(export_type='datajson', owner_org=None):
         if owner_org:
             if 'datajson' == export_type:
                 # we didn't check ownership for this type of export, so never load private datasets here
-                packages = _get_ckan_datasets(org=owner_org)
+                packages = _get_ckan_datasets(org=owner_org, dataset_types=dataset_types)
                 if not packages:
                     packages = get_packages(owner_org=owner_org, with_private=False)
             else:
                 packages = get_packages(owner_org=owner_org, with_private=True)
         else:
-            # TODO: load data by pages
-            # packages = p.toolkit.get_action("current_package_list_with_resources")(
-            # None, {'limit': 50, 'page': 300})
-            packages = _get_ckan_datasets()
-            # packages = p.toolkit.get_action("current_package_list_with_resources")(None, {})
+            packages = _get_ckan_datasets(dataset_types=dataset_types)
 
-        json_export_map = get_export_map_json()
+        default_export_map = get_export_map_json()
 
-        if json_export_map:
+        # Build per-type export maps when multiple types are requested
+        type_export_maps = None
+        if dataset_types and len(dataset_types) > 1:
+            type_export_maps = {'dataset': default_export_map}
+            for pkg_type, map_filename in ECOSYSTEM_TYPE_MAPS.items():
+                if pkg_type in dataset_types:
+                    type_map = get_export_map_json(map_filename)
+                    if type_map:
+                        type_export_maps[pkg_type] = type_map
+
+        if default_export_map:
             for pkg in packages:
+                pkg_type = pkg.get('type', 'dataset')
+                json_export_map = (
+                    type_export_maps.get(pkg_type, default_export_map)
+                    if type_export_maps else default_export_map
+                )
+
                 if json_export_map.get('debug'):
                     output.append(pkg)
-                # logger.error('package: %s', json.dumps(pkg))
-                # logger.debug("processing %s" % (pkg.get('title')))
                 extras = dict([(x['key'], x['value']) for x in pkg.get('extras', {})])
 
                 # unredacted = all non-draft datasets (public + private)
                 # redacted = public-only, non-draft datasets
                 if export_type in ['unredacted', 'redacted']:
                     if 'Draft' == extras.get('publishing_status'):
-                        # publisher = detect_publisher(extras)
-                        # logger.warn("Dataset id=[%s], title=[%s], organization=[%s] omitted (%s)\n",
-                        #             pkg.get('id'), pkg.get('title'), publisher,
-                        #             'publishing_status: Draft')
-                        # _errors_json.append(OrderedDict([
-                        #     ('id', pkg.get('id')),
-                        #     ('name', pkg.get('name')),
-                        #     ('title', pkg.get('title')),
-                        #     ('errors', [(
-                        #         'publishing_status: Draft',
-                        #         [
-                        #             'publishing_status: Draft'
-                        #         ]
-                        #     )])
-                        # ]))
-
                         continue
-                        # if ('redacted' == export_type and
-                        #         re.match(r'[Nn]on-public', extras.get('public_access_level'))):
-                        #     continue
                 # draft = all draft-only datasets
                 elif 'draft' == export_type:
                     if 'publishing_status' not in list(extras.keys()) or extras.get('publishing_status') != 'Draft':
@@ -200,7 +182,6 @@ def make_json(export_type='datajson', owner_org=None):
 
                 if datajson_entry and \
                         (not json_export_map.get('validation_enabled') or is_valid(datajson_entry)):
-                    # logger.debug("writing to json: %s" % (pkg.get('title')))
                     output.append(datajson_entry)
                 else:
                     publisher = detect_publisher(extras)
@@ -211,7 +192,7 @@ def make_json(export_type='datajson', owner_org=None):
                         logger.warn("Dataset id=[%s], title=[%s], organization=[%s] omitted, reason above.\n",
                                     pkg.get('id', None), pkg.get('title', None), publisher)
 
-            data = Package2Pod.wrap_json_catalog(output, json_export_map)
+            data = Package2Pod.wrap_json_catalog(output, default_export_map)
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         filename = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -397,14 +378,19 @@ def validator():
     return render('datajsonvalidator.html')
 
 
-def _get_ckan_datasets(org=None, with_private=False):
+def _get_ckan_datasets(org=None, with_private=False, dataset_types=None):
     n = 500
     page = 1
     dataset_list = []
 
     q = '+capacity:public' if not with_private else '*:*'
 
-    fq = 'dataset_type:dataset'
+    if dataset_types:
+        type_filter = ' OR '.join('dataset_type:{}'.format(t) for t in dataset_types)
+        fq = '({})'.format(type_filter)
+    else:
+        fq = 'dataset_type:dataset'
+
     if org:
         fq += " AND organization:" + org
 
@@ -430,6 +416,10 @@ datapusher.add_url_rule('/data.json',
                         view_func=generate_json)
 datapusher.add_url_rule('/organization/<org_id>/data.json',
                         view_func=generate_org_json)
+datapusher.add_url_rule('/ecosystem.json',
+                        view_func=generate_ecosystem_json)
+datapusher.add_url_rule('/organization/<org_id>/ecosystem.json',
+                        view_func=generate_ecosystem_org_json)
 datapusher.add_url_rule('/organization/<org_id>/redacted.json',
                         view_func=generate_redacted)
 datapusher.add_url_rule('/organization/<org_id>/unredacted.json',

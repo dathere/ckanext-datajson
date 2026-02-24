@@ -105,20 +105,27 @@ def strip_if_string(val):
     return val
 
 
-def get_export_map_json():
+def get_export_map_json(map_filename=None):
     """
-    Reading json export map from file
-    :param map_filename: str
-    :return: obj
+    Reading json export map from file.
+    :param map_filename: str or None. If None, uses the configured default map.
+    :return: obj or None
     """
     import os
 
-    map_filename = config.get("ckanext.datajson.export_map_filename", "export.map.json")
+    use_default_fallback = map_filename is None
+    if map_filename is None:
+        map_filename = config.get("ckanext.datajson.export_map_filename", "export.map.json")
+
     map_path = os.path.join(os.path.dirname(__file__), 'export_map', map_filename)
 
     if not os.path.isfile(map_path):
-        log.warn("Could not find %s ! Please create it. Use samples from same folder", map_path)
-        map_path = os.path.join(os.path.dirname(__file__), 'export_map', 'export.catalog.map.sample.json')
+        if use_default_fallback:
+            log.warn("Could not find %s ! Please create it. Use samples from same folder", map_path)
+            map_path = os.path.join(os.path.dirname(__file__), 'export_map', 'export.catalog.map.sample.json')
+        else:
+            log.warn("Could not find export map: %s", map_path)
+            return None
 
     with open(map_path, 'r') as export_map_json:
         json_export_map = json.load(export_map_json, object_pairs_hook=OrderedDict)
@@ -214,7 +221,7 @@ class PackageExtraCache(object):
         try:
             self.pid = package.get('id')
 
-            current_extras = package.get('extras')
+            current_extras = package.get('extras') or []
             new_extras = {}
             for extra in current_extras:
                 if 'extras_rollup' == extra.get('key'):
